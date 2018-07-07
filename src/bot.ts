@@ -219,9 +219,10 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   const contextId = received_gameplay.context_id;
   const payload = received_gameplay.payload;
 
-  if (payload) {
+  // if (payload) {
+    console.log("payload:");
     console.log(payload);
-  }
+  // }
 
   // should we even ask?
   const client = new Client({
