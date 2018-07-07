@@ -1,0 +1,33 @@
+{
+  "name": "minisquadrononlinempserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/server",
+  "types": "./lib/server",
+  "scripts": {
+    "start": "NODE_OPTIONS='--max_old_space_size=128' ./node_modules/.bin/ts-node -- ./src/server.ts",
+    "tsc": "NODE_ENV=production tsc",
+    "dev": "NODE_ENV=development npm run build:live",
+    "dev_https": "NODE_ENV=development HTTPS=true npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev_https_inspect": "NODE_OPTIONS='--inspect=9222 --max_old_space_size=128' NODE_ENV=development HTTPS=true ./node_modules/.bin/ts-node -- ./src/server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.11.1",
+    "@types/nanoid": "^1.0.0",
+    "@types/node": "^10.1.2",
+    "@types/request": "^2.47.1",
+    "nodemon": "^1.17.5",
+    "ts-node": "^6.0.4",
+    "tslint": "^5.10.0",
+    "typescript": "^2.8.3"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "nanoid": "^1.0.3",
+    "request": "^2.87.0"
+  }
+}

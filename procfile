@@ -1,0 +1,2 @@
+web: npm start
+dev_https: npm run dev_https

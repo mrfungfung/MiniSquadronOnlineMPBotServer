@@ -1,0 +1,10 @@
+git commit -am 'rebuild' --allow-empty
+
+// bots
+heroku local
+https://developers.facebook.com/docs/games/instant-games/guides/bots-and-server-communication
+https://developers.facebook.com/docs/games/instant-games/getting-started/bot-setup
+https://developers.facebook.com/docs/messenger-platform/reference/buttons/game-play
+https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/messaging_game_plays
+
+curl -k -X GET "https://rocky-temple-98912.herokuapp.com/webhook?hub.verify_token=84CAE515F40F6090CA62C8A5B2753FF9D98B6AE4265585EE450670EB2D16D771&hub.challenge=CHALLENGE_ACCEPTED&hub.mode=subscribe"
