@@ -6,8 +6,6 @@
 // -- getSignedPlayerInfoAsync then (query backend and verify using crypto
 // - if i have friends then Shout them a message!!
 // -- callSendAPI with a bunch of shit
-// need to fire up a separate messaging server! (with postgresql)
-// remember and stop if user has enough
 
 import {Client} from "pg";
 import request from "request";
@@ -220,6 +218,10 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   const playerId = received_gameplay.player_id; // Instant Games player id
   const contextId = received_gameplay.context_id;
   const payload = received_gameplay.payload;
+
+  if (payload) {
+    console.log(payload);
+  }
 
   // should we even ask?
   const client = new Client({
