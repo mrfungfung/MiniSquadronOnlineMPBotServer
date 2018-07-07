@@ -224,17 +224,14 @@ function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
       connectedPlayersNames.push(connectedPlayers[psid]);
     }
   }
-  console.log("connectedPlayersPSIDs");
-  console.log(connectedPlayersPSIDs);
-  console.log("connectedPlayersNames");
-  console.log(connectedPlayersNames);
 
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
   });
 
   client.connect(function(err) {
-    client.query("UPDATE " + FRIEND_GRAPH + " SET friend_psids = friend_psids || hstore($1,$2) WHERE sender_psid=($3)",
+    client.query("UPDATE " + FRIEND_GRAPH +
+                " SET friend_psids = friend_psids || hstore($1::TEXT[],$2::TEXT[]) WHERE sender_psid=($3)",
                 [connectedPlayersPSIDs, connectedPlayersNames, sender_psid], function(qerr, result) {
       if (qerr) {
         console.error(qerr);
@@ -242,7 +239,7 @@ function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
       } else {
         // check to see what results are back
         if (result.rowCount === 0) { // need to insert please
-          client.query("INSERT INTO " + FRIEND_GRAPH + " VALUES($1,hstore($2,$3))",
+          client.query("INSERT INTO " + FRIEND_GRAPH + " VALUES($1,hstore($2::TEXT[],$3::TEXT[]))",
           [sender_psid, connectedPlayersPSIDs, connectedPlayersNames], function(qqerr, rresult) {
             if (qqerr) {
               console.error(qqerr);
