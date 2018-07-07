@@ -19,6 +19,7 @@
     "@types/express": "^4.11.1",
     "@types/nanoid": "^1.0.0",
     "@types/node": "^10.1.2",
+    "@types/pg": "^7.4.10",
     "@types/request": "^2.47.1",
     "nodemon": "^1.17.5",
     "ts-node": "^6.0.4",
@@ -28,6 +29,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "nanoid": "^1.0.3",
+    "pg": "^7.4.3",
     "request": "^2.87.0"
   }
 }

@@ -9,6 +9,7 @@
 // need to fire up a separate messaging server! (with postgresql)
 // remember and stop if user has enough
 
+import {Client} from "pg";
 import request from "request";
 import {app} from "./server";
 
@@ -152,6 +153,22 @@ function handlePostback(sender_psid: string, received_postback: any) {
   } else if (payload === "ENJOY_STOP_ASKING") {
     response = { text: "OK I'm gonna shut up! Feel free to post your thoughts \
 to https://www.facebook.com/minisquadron.online and let me know!" };
+
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+    });
+
+    client.connect(function(err) {
+      client.query("INSERT INTO stopasking VALUES($1)", [sender_psid], function(qerr, result) {
+        if (qerr) {
+          console.error(err);
+        } else {
+          // people do nothing
+        }
+        client.end();
+      });
+    });
+
   } else if (payload === "ENJOY_NO") {
     response = {
       attachment: {
