@@ -240,7 +240,6 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid: string, response: any) {
-  console.log("process.env.PAGES_ACCESS_TOKEN: " + process.env.PAGES_ACCESS_TOKEN);
   // Construct the message body
   const request_body = {
     message: response,
