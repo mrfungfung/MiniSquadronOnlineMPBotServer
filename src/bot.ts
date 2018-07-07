@@ -158,11 +158,6 @@ to https://www.facebook.com/minisquadron.online and let me know!" };
         payload: {
           buttons: [
             {
-              payload: "GAME_SUCKS_REASON_CANT_CONNECT",
-              title: "Can't connect",
-              type: "postback",
-            },
-            {
               payload: "GAME_SUCKS_REASON_LATENCY_BAD",
               title: "Poor connectivity",
               type: "postback",
