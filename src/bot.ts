@@ -271,9 +271,10 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   const payload = received_gameplay.payload;
 
   if (payload) {
-    console.log("payload:");
-    console.log(payload);
+    console.log("payload.connectedPlayers:");
+    console.log(payload.connectedPlayers);
     if (payload.connectedPlayers) {
+      console.log("writeFriendsToDB");
       writeFriendsToDB(sender_psid, payload.connectedPlayers);
     }
   }
