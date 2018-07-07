@@ -1,7 +1,7 @@
 // how to do want the bot to respond? Basically we should
-// - inform the bot of PS_ID and my FRIENDS
-// -- use getConnectedPlayersAsync
-// -- then FBInstant.setSessionData({  scoutSent:true,   scoutDurationInHours:24});
+// - inform the bot of PS_ID and my FRIENDS (done)
+// -- use getConnectedPlayersAsync (done)
+// -- then FBInstant.setSessionData({  scoutSent:true,   scoutDurationInHours:24}); (done)
 // - everytime I log on, check all my friends
 // -- getSignedPlayerInfoAsync then (query backend and verify using crypto
 // - if i have friends then Shout them a message!!
@@ -11,8 +11,12 @@ import {Client} from "pg";
 import request from "request";
 import {app} from "./server";
 
+// tslint:disable-next-line
+const hstore = require('pg-hstore')()
+
 const expectingReasonReply: any = {};
 const STOP_ASKING_TABLE = "stopasking";
+const FRIEND_GRAPH = "friendnames";
 
 export function setUpBotWebHooks() {
   // Adds support for GET requests to our webhook
@@ -160,7 +164,7 @@ to https://www.facebook.com/minisquadron.online and let me know!" };
     client.connect(function(err) {
       client.query("INSERT INTO " + STOP_ASKING_TABLE + " VALUES($1)", [sender_psid], function(qerr, result) {
         if (qerr) {
-          console.error(err);
+          console.error(qerr);
         } else {
           // people do nothing
         }
@@ -210,6 +214,46 @@ to https://www.facebook.com/minisquadron.online and let me know!" };
   callSendAPI(sender_psid, response);
 }
 
+function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
+
+  const connectedPlayersPSIDs: any = [];
+  const connectedPlayersNames: any = [];
+  for (const psid in connectedPlayers) {
+    if (connectedPlayers.hasOwnProperty(psid)) {
+      connectedPlayersPSIDs.push(psid);
+      connectedPlayersNames.push(connectedPlayers[psid]);
+    }
+  }
+
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  client.connect(function(err) {
+    client.query("UPDATE " + FRIEND_GRAPH + " SET friend_psids = friend_psids || hstore($1,$2) WHERE sender_psid=($3)",
+                [connectedPlayersPSIDs, connectedPlayersNames, sender_psid], function(qerr, result) {
+      if (qerr) {
+        console.error(qerr);
+      } else {
+        // check to see what results are back
+        if (result.rowCount === 0) { // need to insert please
+          client.query("INSERT INTO " + FRIEND_GRAPH + " VALUES($1,hstore($2,$3))",
+          [connectedPlayersPSIDs, connectedPlayersNames, sender_psid], function(qqerr, rresult) {
+            if (qqerr) {
+              console.error(qqerr);
+            } else {
+              // do nothing
+            }
+            client.end();
+          });
+        } else {
+          client.end();
+        }
+      }
+    });
+  });
+}
+
 // Handles messaging_postbacks events
 function handleGamePlay(sender_psid: string, received_gameplay: any) {
   console.log("handleGamePlay");
@@ -219,10 +263,13 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   const contextId = received_gameplay.context_id;
   const payload = received_gameplay.payload;
 
-  // if (payload) {
+  if (payload) {
     console.log("payload:");
     console.log(payload);
-  // }
+    if (payload.connectedPlayers) {
+      writeFriendsToDB(sender_psid, payload.connectedPlayers);
+    }
+  }
 
   // should we even ask?
   const client = new Client({
@@ -233,7 +280,7 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
     client.query("SELECT sender_psid FROM " + STOP_ASKING_TABLE + " WHERE sender_psid=($1)", [sender_psid],
     function(qerr, result) {
       if (qerr) {
-        console.error(err);
+        console.error(qerr);
       } else {
         if (result.rowCount === 0) {
           // ok we can do this

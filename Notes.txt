@@ -14,4 +14,6 @@ pg_ctl -D /usr/local/var/postgres start
 createdb
 
 // make a table
-create table StopAsking (sender_psid text primary key);
+CREATE EXTENSION hstore;
+create table stopasking (sender_psid text primary key);
+create table friendnames (sender_psid text primary key, friend_psids hstore);
