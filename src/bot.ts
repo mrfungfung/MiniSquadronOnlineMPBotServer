@@ -235,7 +235,6 @@ function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
                 [connectedPlayersPSIDs, connectedPlayersNames, sender_psid], function(qerr, result) {
       if (qerr) {
         console.error(qerr);
-        console.log(qerr);
       } else {
         // check to see what results are back
         if (result.rowCount === 0) { // need to insert please
@@ -243,14 +242,14 @@ function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
           [sender_psid, connectedPlayersPSIDs, connectedPlayersNames], function(qqerr, rresult) {
             if (qqerr) {
               console.error(qqerr);
-              console.log(qqerr);
             } else {
               // do nothing
-              console.log("errr success!");
+              console.log("New friends INSERT success!");
             }
             client.end();
           });
         } else {
+          console.log("Old friends UPDATE success!");
           client.end();
         }
       }
@@ -267,12 +266,11 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   const contextId = received_gameplay.context_id;
   const payload = received_gameplay.payload;
 
+  console.log("playerId: " + playerId + " is the same as sender_psid: " + sender_psid);
+
   if (payload) {
     const payloadJSON = JSON.parse(payload);
-    console.log("payloadJSON.connectedPlayers:");
-    console.log(payloadJSON.connectedPlayers);
     if (payloadJSON.connectedPlayers) {
-      console.log("writeFriendsToDB");
       writeFriendsToDB(sender_psid, payloadJSON.connectedPlayers);
     }
   }
