@@ -6,7 +6,7 @@
 // - everytime I log on, check all my friends
 // -- getSignedPlayerInfoAsync then (query backend and verify using crypto
 // - if i have friends then Shout them a message!! (DONE)
-// -- callSendAPI with a bunch of shit
+// -- callSendAPI with a bunch of shit (DONE)
 
 import CryptoJS from "crypto-js";
 import {Client} from "pg";
@@ -30,26 +30,27 @@ function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, cont
   }
 
   let response;
-  response = {
-    attachment: {
-      payload: {
-        elements: [{
-          buttons: [{
-              game_metadata,
-              payload: "paaayyyyyloooooad",
-              title: "Play MiniSquadron!",
-              type: "game_play",
-          }],
-          image_url: "https://petersfancybrownhats.com/company_image.png",
-          subtitle: "This is a freakign subtitle.",
-          title: "This is TITLE!",
-        }],
-        template_type: "generic",
-        text: "Your friend is playing MiniSquadron! Join now!",
-      },
-      type: "template",
-    },
-  };
+  response = { text: "fffffff" };
+  // response = {
+  //   attachment: {
+  //     payload: {
+  //       elements: [{
+  //         buttons: [{
+  //             game_metadata,
+  //             payload: "paaayyyyyloooooad",
+  //             title: "Play MiniSquadron!",
+  //             type: "game_play",
+  //         }],
+  //         image_url: "https://petersfancybrownhats.com/company_image.png",
+  //         subtitle: "This is a freakign subtitle.",
+  //         title: "This is TITLE!",
+  //       }],
+  //       template_type: "generic",
+  //       text: "Your friend is playing MiniSquadron! Join now!",
+  //     },
+  //     type: "template",
+  //   },
+  // };
   callSendAPI(target_psid, response);
 }
 
