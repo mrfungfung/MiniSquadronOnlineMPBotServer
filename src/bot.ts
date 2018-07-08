@@ -266,7 +266,7 @@ function recordPSID(playerID: string, psid: string) {
   });
 
   client.connect(function(err) {
-    client.query("INSERT INTO " + PLAYER_INFO_TABLE + " VALUES($1,$2) ON CONFLICT (plaeyrid) DO \
+    client.query("INSERT INTO " + PLAYER_INFO_TABLE + " VALUES($1,$2) ON CONFLICT (playerid) DO \
 UPDATE SET playerid = ($1), psid = ($2)",
     [playerID, psid], function(qerr, result) {
       if (qerr) {
