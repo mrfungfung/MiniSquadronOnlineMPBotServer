@@ -12,13 +12,14 @@ export const app: express.Express = express();
 // app.use(express.static(DIST_DIR));
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded({extended: true})); // to support URL-encoded bodies
-// var allowCrossDomain = function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', "*");
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.header('Access-Control-Allow-Headers', 'Content-Type');
-//   next();
-// }
-// app.use(allowCrossDomain);
+const allowCrossDomain = function(req: any, res: any, next: any) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+};
+app.use(allowCrossDomain);
+
 setUpBotWebHooks();
 app.get("/", function(req: any, res: any) {
     res.send("MiniSquadron Bot Server");
