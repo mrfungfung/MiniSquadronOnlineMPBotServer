@@ -32,7 +32,7 @@ function sendToFriendImPlaying(target_psid: string,
         elements: [{
           buttons: [{
               game_metadata,
-              payload: "{roomName: asshole}",
+              payload: "{roomName: 'asshole'}",
               title: "Join Now!",
               type: "game_play",
           }],
