@@ -1,14 +1,6 @@
-// how to do want the bot to respond? Basically we should
-// - inform the bot of PS_ID and my FRIENDS (done)
-// -- use getConnectedPlayersAsync (done)
-// -- then FBInstant.setSessionData({  scoutSent:true,   scoutDurationInHours:24}); (done)
-// -- EVERYTIME SOMEONE IS HERE LOG THEIR sender_psid to their game id (done)
-// - everytime I log on, check all my friends
-// -- getSignedPlayerInfoAsync then (query backend and verify using crypto
-// - if i have friends then Shout them a message!! (DONE)
-// -- callSendAPI with a bunch of shit (DONE)
+// work out the crypto signing
 
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 import {Client} from "pg";
 import request from "request";
 import {app} from "./server";
@@ -33,9 +25,6 @@ function sendToFriendImPlaying(target_psid: string,
     game_metadata.context_id = contextID;
   }
 
-  console.log("roomName:");
-  console.log(roomName);
-
   let response;
   response = {
     attachment: {
@@ -43,7 +32,7 @@ function sendToFriendImPlaying(target_psid: string,
         elements: [{
           buttons: [{
               game_metadata,
-              payload: roomName,
+              payload: "{roomName: asshole}",
               title: "Join Now!",
               type: "game_play",
           }],
