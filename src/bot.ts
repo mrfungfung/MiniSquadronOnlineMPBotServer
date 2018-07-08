@@ -25,6 +25,10 @@ function sendToFriendImPlaying(target_psid: string,
     game_metadata.context_id = contextID;
   }
 
+  const funny = {
+    roomName: "fucking",
+  };
+
   let response;
   response = {
     attachment: {
@@ -32,14 +36,14 @@ function sendToFriendImPlaying(target_psid: string,
         elements: [{
           buttons: [{
               game_metadata,
-              payload: "{roomName: 'asshole'}",
+              payload: JSON.stringify(funny),
               title: "Join Now!",
               type: "game_play",
           }],
           // tslint:disable-next-line
           image_url: "https://scontent-dfw5-1.xx.fbcdn.net/v/t1.0-9/36808766_508622472886240_4182094945575763968_n.png?_nc_cat=0&oh=5efce18ea804cef37d93d18a29e95a7e&oe=5BE688D6",
           subtitle: "Join them now!",
-          title: "Your friend " + senderPlayerName + " is playing MiniSquadron!",
+          title: "Your mate " + senderPlayerName + " is playing MiniSquadron!",
         }],
         template_type: "generic",
       },
