@@ -267,12 +267,16 @@ function recordPSID(playerID: string, psid: string) {
 
   client.connect(function(err) {
     client.query("INSERT INTO " + PLAYER_INFO_TABLE + " VALUES($1,$2) ON CONFLICT (playerid) DO \
-UPDATE SET playerid = ($1), psid = ($2)",
+UPDATE SET psid = ($2) WHERE " + PLAYER_INFO_TABLE + ".psid != ($2)",
     [playerID, psid], function(qerr, result) {
       if (qerr) {
         console.error(qerr);
       } else {
-        // people do nothing
+        if (result.rowCount === 0) {
+          console.log("No change in playerinfo psid");
+        } else {
+          console.log("Inserted or updated playerinfo psid");
+        }
       }
       client.end();
     });
