@@ -24,10 +24,10 @@ function sendToFriendImPlaying(target_psid: string,
   if (contextID) {
     game_metadata.context_id = contextID;
   }
-
-  const funny = {
-    roomName: "fucking",
+  const gameData = {
+    roomName,
   };
+  console.log(JSON.stringify(gameData));
 
   let response;
   response = {
@@ -36,7 +36,7 @@ function sendToFriendImPlaying(target_psid: string,
         elements: [{
           buttons: [{
               game_metadata,
-              payload: JSON.stringify(funny),
+              payload: JSON.stringify(gameData),
               title: "Join Now!",
               type: "game_play",
           }],
