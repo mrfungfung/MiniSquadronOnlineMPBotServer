@@ -5,7 +5,7 @@
 // -- EVERYTIME SOMEONE IS HERE LOG THEIR sender_psid to their game id (done)
 // - everytime I log on, check all my friends
 // -- getSignedPlayerInfoAsync then (query backend and verify using crypto
-// - if i have friends then Shout them a message!!
+// - if i have friends then Shout them a message!! (DONE)
 // -- callSendAPI with a bunch of shit
 
 import CryptoJS from "crypto-js";
@@ -20,6 +20,38 @@ const expectingReasonReply: any = {};
 const STOP_ASKING_TABLE = "stopasking";
 const PLAYER_INFO_TABLE = "playerinfo";
 const FRIEND_GRAPH = "friendnames";
+
+function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, contextID: string) {
+  const game_metadata: any = {
+    player_id: senderPlayerID,
+  };
+  if (contextID) {
+    game_metadata.context_id = contextID;
+  }
+
+  let response;
+  response = {
+    attachment: {
+      payload: {
+        elements: [{
+          buttons: [{
+              game_metadata,
+              payload: "paaayyyyyloooooad",
+              title: "Play MiniSquadron!",
+              type: "game_play",
+          }],
+          image_url: "https://petersfancybrownhats.com/company_image.png",
+          subtitle: "This is a freakign subtitle.",
+          title: "This is TITLE!",
+        }],
+        template_type: "generic",
+        text: "Your friend is playing MiniSquadron! Join now!",
+      },
+      type: "template",
+    },
+  };
+  callSendAPI(target_psid, response);
+}
 
 export function setUpBotWebHooks() {
   app.get("/sayhitofriends", (req: any, res: any) => {
@@ -46,6 +78,7 @@ export function setUpBotWebHooks() {
     */
 
     const playerID = req.query.playerID;
+    const contextID = req.query.contextID;
     const client = new Client({
       connectionString: process.env.DATABASE_URL,
     });
@@ -86,10 +119,7 @@ export function setUpBotWebHooks() {
                       // };
                       // callSendAPI("1580944105350275", response);
                     }
-                    const response = {
-                      text: "Your friend is playing!",
-                    };
-                    callSendAPI("1580944105350275", response);
+                    sendToFriendImPlaying("1580944105350275", playerID, contextID); // sending to myself now
                   }
                   client.end();
                 });
