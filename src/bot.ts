@@ -99,7 +99,7 @@ export function setUpBotWebHooks() {
         });
       }
     });
-    res.status(200);
+    res.sendStatus(200);
   });
 
   // Adds support for GET requests to our webhook
