@@ -40,12 +40,12 @@ function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, cont
           buttons: [{
               game_metadata,
               payload: "paaayyyyyloooooad",
-              title: "Play MiniSquadron!",
+              title: "Join Now!",
               type: "game_play",
           }],
           image_url: "https://petersfancybrownhats.com/company_image.png",
-          subtitle: "This is a freakign subtitle.",
-          title: "This is TITLE!",
+          subtitle: "Join your friend now and play MiniSquadron!",
+          title: "Your friend is playing MiniSquadron!",
         }],
         template_type: "generic",
         // text: "Your friend is playing MiniSquadron! Join now!",
@@ -102,15 +102,15 @@ export function setUpBotWebHooks() {
               hstore.parse(result.rows[0].friend_playerids, function(hstore_map_playerids_to_names: any) {
                 console.log(hstore_map_playerids_to_names);
                 const playerids = Object.keys(hstore_map_playerids_to_names);
-                console.log("playerids:");
-                console.log(playerids);
+                // console.log("playerids:");
+                // console.log(playerids);
                 client.query("select playerid, psid from " + PLAYER_INFO_TABLE + " where playerid = ANY ($1::TEXT[]);",
                 [playerids], function(qqerr, qqresult) {
                   if (qqerr) {
                     console.error(qqerr);
                   } else {
                     console.log("sending to some friends...");
-                    console.log(qqresult.rows);
+                    // console.log(qqresult.rows);
                     for (const row of qqresult.rows) {
                       const playerid = row.playerid;
                       const psid = row.psid;
