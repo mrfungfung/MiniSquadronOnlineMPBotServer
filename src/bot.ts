@@ -1,4 +1,5 @@
 // work out the crypto signing
+// make the udpate/insert = upsert optimisation
 
 // import CryptoJS from "crypto-js";
 import {Client} from "pg";
