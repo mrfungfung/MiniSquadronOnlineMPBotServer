@@ -21,7 +21,11 @@ const STOP_ASKING_TABLE = "stopasking";
 const PLAYER_INFO_TABLE = "playerinfo";
 const FRIEND_GRAPH = "friendnames";
 
-function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, contextID: string) {
+function sendToFriendImPlaying(target_psid: string,
+                               senderPlayerID: string,
+                               senderPlayerName: string,
+                               contextID: string,
+                               roomName: string) {
   const game_metadata: any = {
     player_id: senderPlayerID,
   };
@@ -29,8 +33,8 @@ function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, cont
     game_metadata.context_id = contextID;
   }
 
-  console.log("game_metadata:");
-  console.log(game_metadata);
+  console.log("roomName:");
+  console.log(roomName);
 
   let response;
   response = {
@@ -39,14 +43,14 @@ function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, cont
         elements: [{
           buttons: [{
               game_metadata,
-              payload: "paaayyyyyloooooad",
+              payload: roomName,
               title: "Join Now!",
               type: "game_play",
           }],
           // tslint:disable-next-line
           image_url: "https://scontent-dfw5-1.xx.fbcdn.net/v/t1.0-9/36808766_508622472886240_4182094945575763968_n.png?_nc_cat=0&oh=5efce18ea804cef37d93d18a29e95a7e&oe=5BE688D6",
           subtitle: "Join them now!",
-          title: "Your friend is playing MiniSquadron!",
+          title: "Your friend " + senderPlayerName + " is playing MiniSquadron!",
         }],
         template_type: "generic",
       },
@@ -81,7 +85,9 @@ export function setUpBotWebHooks() {
     */
 
     const playerID = req.query.playerID;
+    const playerName = req.query.playerName;
     const contextID = req.query.contextID;
+    const roomName = req.query.roomName;
     const client = new Client({
       connectionString: process.env.DATABASE_URL,
     });
@@ -100,7 +106,7 @@ export function setUpBotWebHooks() {
               client.end();
             } else {
               hstore.parse(result.rows[0].friend_playerids, function(hstore_map_playerids_to_names: any) {
-                console.log(hstore_map_playerids_to_names);
+                // console.log(hstore_map_playerids_to_names);
                 const playerids = Object.keys(hstore_map_playerids_to_names);
                 // console.log("playerids:");
                 // console.log(playerids);
@@ -122,7 +128,11 @@ export function setUpBotWebHooks() {
                       // };
                       // callSendAPI("1580944105350275", response);
                     }
-                    sendToFriendImPlaying("1580944105350275", playerID, contextID); // sending to myself now
+                    sendToFriendImPlaying("1580944105350275", // really its psid
+                                          playerID,
+                                          playerName,
+                                          contextID,
+                                          roomName); // sending to myself now
                   }
                   client.end();
                 });
