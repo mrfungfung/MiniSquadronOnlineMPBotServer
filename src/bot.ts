@@ -80,7 +80,16 @@ export function setUpBotWebHooks() {
                       const psid = row.psid;
                       const playername = hstore_map_playerids_to_names[playerid];
                       console.log("sending message to " + playerid + ", " + psid + ", " + playername);
+
+                      // const response = {
+                      //   text: "Your friend + " + playername + " is playing!",
+                      // };
+                      // callSendAPI("1580944105350275", response);
                     }
+                    const response = {
+                      text: "Your friend is playing!",
+                    };
+                    callSendAPI("1580944105350275", response);
                   }
                   client.end();
                 });
