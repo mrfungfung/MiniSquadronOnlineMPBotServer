@@ -41,7 +41,7 @@ function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, cont
               title: "Play MiniSquadron!",
               type: "game_play",
           }],
-          image_url: "https://petersfancybrownhats.com/company_image.png",
+          // image_url: "https://petersfancybrownhats.com/company_image.png",
           subtitle: "This is a freakign subtitle.",
           title: "This is TITLE!",
         }],
