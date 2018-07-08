@@ -1,5 +1,6 @@
 // work out the crypto signing
 // make the udpate/insert = upsert optimisation
+// option to shut the fuck up
 
 // import CryptoJS from "crypto-js";
 import {Client} from "pg";
@@ -117,16 +118,17 @@ export function setUpBotWebHooks() {
                       const playername = hstore_map_playerids_to_names[playerid];
                       console.log("sending message to " + playerid + ", " + psid + ", " + playername);
 
-                      // const response = {
-                      //   text: "Your friend + " + playername + " is playing!",
-                      // };
-                      // callSendAPI("1580944105350275", response);
+                      sendToFriendImPlaying(psid,
+                                            playerID,
+                                            playerName,
+                                            contextID,
+                                            roomName); // sending to myself now
                     }
-                    sendToFriendImPlaying("1580944105350275", // really its psid
-                                          playerID,
-                                          playerName,
-                                          contextID,
-                                          roomName); // sending to myself now
+                    // sendToFriendImPlaying("1580944105350275", // really its psid
+                    //                       playerID,
+                    //                       playerName,
+                    //                       contextID,
+                    //                       roomName); // sending to myself now
                   }
                   client.end();
                 });
