@@ -2,6 +2,7 @@
 // - inform the bot of PS_ID and my FRIENDS (done)
 // -- use getConnectedPlayersAsync (done)
 // -- then FBInstant.setSessionData({  scoutSent:true,   scoutDurationInHours:24}); (done)
+// -- EVERYTIME SOMEONE IS HERE LOG THEIR sender_psid to their game id
 // - everytime I log on, check all my friends
 // -- getSignedPlayerInfoAsync then (query backend and verify using crypto
 // - if i have friends then Shout them a message!!
@@ -16,6 +17,7 @@ const hstore = require('pg-hstore')()
 
 const expectingReasonReply: any = {};
 const STOP_ASKING_TABLE = "stopasking";
+const PLAYER_INFO_TABLE = "playerinfo";
 const FRIEND_GRAPH = "friendnames";
 
 export function setUpBotWebHooks() {
@@ -257,6 +259,26 @@ function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
   });
 }
 
+function recordPSID(playerID: string, psid: string) {
+  // record in database
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  client.connect(function(err) {
+    client.query("INSERT INTO " + PLAYER_INFO_TABLE + " VALUES($1,$2) ON CONFLICT (plaeyrid) DO \
+UPDATE SET playerid = ($1), psid = ($2)",
+    [playerID, psid], function(qerr, result) {
+      if (qerr) {
+        console.error(qerr);
+      } else {
+        // people do nothing
+      }
+      client.end();
+    });
+  });
+}
+
 // Handles messaging_postbacks events
 function handleGamePlay(sender_psid: string, received_gameplay: any) {
   console.log("handleGamePlay");
@@ -266,7 +288,7 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   const contextId = received_gameplay.context_id;
   const payload = received_gameplay.payload;
 
-  console.log("playerId: " + playerId + " is the same as sender_psid: " + sender_psid);
+  recordPSID(playerId, sender_psid);
 
   if (payload) {
     const payloadJSON = JSON.parse(payload);

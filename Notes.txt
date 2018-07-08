@@ -16,4 +16,5 @@ createdb
 // make a table
 CREATE EXTENSION hstore;
 create table stopasking (sender_psid text primary key);
+create table playerinfo (playerid text primary key, psid text);
 create table friendnames (sender_psid text primary key, friend_psids hstore);
