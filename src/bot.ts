@@ -33,17 +33,16 @@ function sendToFriendImPlaying(target_psid: string, senderPlayerID: string, cont
   console.log(game_metadata);
 
   let response;
-  // response = { text: "fffffff" };
   response = {
     attachment: {
       payload: {
         elements: [{
-          // buttons: [{
-          //     game_metadata,
-          //     payload: "paaayyyyyloooooad",
-          //     title: "Play MiniSquadron!",
-          //     type: "game_play",
-          // }],
+          buttons: [{
+              game_metadata,
+              payload: "paaayyyyyloooooad",
+              title: "Play MiniSquadron!",
+              type: "game_play",
+          }],
           image_url: "https://petersfancybrownhats.com/company_image.png",
           subtitle: "This is a freakign subtitle.",
           title: "This is TITLE!",
