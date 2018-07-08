@@ -2,12 +2,13 @@
 // - inform the bot of PS_ID and my FRIENDS (done)
 // -- use getConnectedPlayersAsync (done)
 // -- then FBInstant.setSessionData({  scoutSent:true,   scoutDurationInHours:24}); (done)
-// -- EVERYTIME SOMEONE IS HERE LOG THEIR sender_psid to their game id
+// -- EVERYTIME SOMEONE IS HERE LOG THEIR sender_psid to their game id (done)
 // - everytime I log on, check all my friends
 // -- getSignedPlayerInfoAsync then (query backend and verify using crypto
 // - if i have friends then Shout them a message!!
 // -- callSendAPI with a bunch of shit
 
+import CryptoJS from "crypto-js";
 import {Client} from "pg";
 import request from "request";
 import {app} from "./server";
@@ -21,6 +22,77 @@ const PLAYER_INFO_TABLE = "playerinfo";
 const FRIEND_GRAPH = "friendnames";
 
 export function setUpBotWebHooks() {
+  app.get("/sayhitofriends", (req: any, res: any) => {
+    // const signedRequest = req.query.signedRequest;
+
+    // let firstpart = signedRequest.split(".")[0];
+    // firstpart = firstpart.replace(/-/g, "+").replace(/_/g, "/");
+    // const signature = CryptoJS.enc.Base64.parse(firstpart).toString();
+    // const dataHash = CryptoJS.HmacSHA256(signedRequest.split(".")[1], '<APP_SECRET>').toString();
+    // const isValid = signature === dataHash;
+    // const json = CryptoJS.enc.Base64.parse(request.split('.')[1]).toString(CryptoJS.enc.Utf8);
+    // const data = JSON.parse(json);
+
+    // console.log(validated); // this will be true if the request is verified as coming from the game
+    // console.log(data); // a JSON object as follows:
+
+    /*
+    {
+      algorithm: 'HMAC-SHA256',
+      issued_at: 1517294566,
+      player_id: '1114685845316172',
+      request_payload: 'custom_payload_supplied_with_request'
+    }
+    */
+
+    const playerID = req.query.playerID;
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+    });
+
+    client.connect(function(err) {
+      if (err) {
+        console.log(err);
+      } else {
+        client.query("SELECT friend_playerids FROM " + FRIEND_GRAPH + " WHERE playerid=($1)", [playerID],
+        function(qerr, result) {
+          if (qerr) {
+            console.error(qerr);
+          } else {
+            if (result.rowCount === 0) {
+              console.log("no friends");
+              client.end();
+            } else {
+              hstore.parse(result.rows[0].friend_playerids, function(hstore_map_playerids_to_names: any) {
+                console.log(hstore_map_playerids_to_names);
+                const playerids = Object.keys(hstore_map_playerids_to_names);
+                console.log("playerids:");
+                console.log(playerids);
+                client.query("select playerid, psid from " + PLAYER_INFO_TABLE + " where playerid = ANY ($1::TEXT[]);",
+                [playerids], function(qqerr, qqresult) {
+                  if (qqerr) {
+                    console.error(qqerr);
+                  } else {
+                    console.log("sending to some friends...");
+                    console.log(qqresult.rows);
+                    for (const row of qqresult.rows) {
+                      const playerid = row.playerid;
+                      const psid = row.psid;
+                      const playername = hstore_map_playerids_to_names[playerid];
+                      console.log("sending message to " + playerid + ", " + psid + ", " + playername);
+                    }
+                  }
+                  client.end();
+                });
+              });
+            }
+          }
+        });
+      }
+    });
+    res.status(200);
+  });
+
   // Adds support for GET requests to our webhook
   app.get("/webhook", (req: any, res: any) => {
     // Your verify token. Should be a random string.
@@ -216,14 +288,14 @@ to https://www.facebook.com/minisquadron.online and let me know!" };
   callSendAPI(sender_psid, response);
 }
 
-function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
+function writeFriendsToDB(playerID: string, connectedPlayers: any) {
 
-  const connectedPlayersPSIDs: any = [];
+  const connectedPlayersPlayerIDs: any = [];
   const connectedPlayersNames: any = [];
-  for (const psid in connectedPlayers) {
-    if (connectedPlayers.hasOwnProperty(psid)) {
-      connectedPlayersPSIDs.push(psid);
-      connectedPlayersNames.push(connectedPlayers[psid]);
+  for (const pid in connectedPlayers) {
+    if (connectedPlayers.hasOwnProperty(pid)) {
+      connectedPlayersPlayerIDs.push(pid);
+      connectedPlayersNames.push(connectedPlayers[pid]);
     }
   }
 
@@ -233,15 +305,15 @@ function writeFriendsToDB(sender_psid: string, connectedPlayers: any) {
 
   client.connect(function(err) {
     client.query("UPDATE " + FRIEND_GRAPH +
-                " SET friend_psids = friend_psids || hstore($1::TEXT[],$2::TEXT[]) WHERE sender_psid=($3)",
-                [connectedPlayersPSIDs, connectedPlayersNames, sender_psid], function(qerr, result) {
+                " SET friend_playerids = friend_playerids || hstore($1::TEXT[],$2::TEXT[]) WHERE playerid=($3)",
+                [connectedPlayersPlayerIDs, connectedPlayersNames, playerID], function(qerr, result) {
       if (qerr) {
         console.error(qerr);
       } else {
         // check to see what results are back
         if (result.rowCount === 0) { // need to insert please
           client.query("INSERT INTO " + FRIEND_GRAPH + " VALUES($1,hstore($2::TEXT[],$3::TEXT[]))",
-          [sender_psid, connectedPlayersPSIDs, connectedPlayersNames], function(qqerr, rresult) {
+          [playerID, connectedPlayersPlayerIDs, connectedPlayersNames], function(qqerr, rresult) {
             if (qqerr) {
               console.error(qqerr);
             } else {
@@ -297,7 +369,7 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   if (payload) {
     const payloadJSON = JSON.parse(payload);
     if (payloadJSON.connectedPlayers) {
-      writeFriendsToDB(sender_psid, payloadJSON.connectedPlayers);
+      writeFriendsToDB(playerId, payloadJSON.connectedPlayers);
     }
   }
 

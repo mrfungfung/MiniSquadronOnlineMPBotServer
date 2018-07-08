@@ -8,6 +8,7 @@ https://developers.facebook.com/docs/messenger-platform/reference/buttons/game-p
 https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/messaging_game_plays
 
 curl -k -X GET "https://rocky-temple-98912.herokuapp.com/webhook?hub.verify_token=84CAE515F40F6090CA62C8A5B2753FF9D98B6AE4265585EE450670EB2D16D771&hub.challenge=CHALLENGE_ACCEPTED&hub.mode=subscribe"
+curl -k -X GET "https://localhost:5000/sayhitofriends?playerID=1"
 
 // how to do psql
 pg_ctl -D /usr/local/var/postgres start
@@ -17,4 +18,4 @@ createdb
 CREATE EXTENSION hstore;
 create table stopasking (sender_psid text primary key);
 create table playerinfo (playerid text primary key, psid text);
-create table friendnames (sender_psid text primary key, friend_psids hstore);
+create table friendnames (playerid text primary key, friend_playerids hstore);
