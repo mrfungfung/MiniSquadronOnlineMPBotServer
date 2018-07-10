@@ -339,6 +339,7 @@ to https://www.facebook.com/minisquadron.online and let me know!" };
 function writeFriendsToDB(playerID: string, connectedPlayers: any) {
 
   if (connectedPlayers.length === 0) {
+    console.log("connectedPlayers.length: 0");
     return;
   }
 
