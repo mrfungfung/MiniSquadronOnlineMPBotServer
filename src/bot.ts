@@ -1,6 +1,6 @@
 // work out the crypto signing
 // make the udpate/insert = upsert optimisation
-// option to shut the fuck up
+// option to shut the fuck up for friend invite
 
 // import CryptoJS from "crypto-js";
 import {Client} from "pg";
@@ -337,6 +337,10 @@ to https://www.facebook.com/minisquadron.online and let me know!" };
 }
 
 function writeFriendsToDB(playerID: string, connectedPlayers: any) {
+
+  if (connectedPlayers.length === 0) {
+    return;
+  }
 
   const connectedPlayersPlayerIDs: any = [];
   const connectedPlayersNames: any = [];
