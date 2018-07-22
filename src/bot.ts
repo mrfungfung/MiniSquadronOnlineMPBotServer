@@ -426,54 +426,54 @@ function handleGamePlay(sender_psid: string, received_gameplay: any) {
   }
 
   // should we even ask?
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-  });
+  // const client = new Client({
+  //   connectionString: process.env.DATABASE_URL,
+  // });
 
-  client.connect(function(err) {
-    client.query("SELECT sender_psid FROM " + STOP_ASKING_TABLE + " WHERE sender_psid=($1)", [sender_psid],
-    function(qerr, result) {
-      if (qerr) {
-        console.error(qerr);
-      } else {
-        if (result.rowCount === 0) {
-          // ok we can do this
-          let response;
-          response = {
-            attachment: {
-              payload: {
-                buttons: [
-                  {
-                    payload: "ENJOY_YES",
-                    title: "Yes it was fun!",
-                    type: "postback",
-                  },
-                  {
-                    payload: "ENJOY_NO",
-                    title: "Not really.",
-                    type: "postback",
-                  },
-                  {
-                    payload: "ENJOY_STOP_ASKING",
-                    title: "Stop asking!",
-                    type: "postback",
-                  },
-                ],
-                template_type: "button",
-                text: "Thanks for playing! Please help me improve this game - did you enjoy your game just now?",
-              },
-              type: "template",
-            },
-          };
+  // client.connect(function(err) {
+  //   client.query("SELECT sender_psid FROM " + STOP_ASKING_TABLE + " WHERE sender_psid=($1)", [sender_psid],
+  //   function(qerr, result) {
+  //     if (qerr) {
+  //       console.error(qerr);
+  //     } else {
+  //       if (result.rowCount === 0) {
+  //         // ok we can do this
+  //         let response;
+  //         response = {
+  //           attachment: {
+  //             payload: {
+  //               buttons: [
+  //                 {
+  //                   payload: "ENJOY_YES",
+  //                   title: "Yes it was fun!",
+  //                   type: "postback",
+  //                 },
+  //                 {
+  //                   payload: "ENJOY_NO",
+  //                   title: "Not really.",
+  //                   type: "postback",
+  //                 },
+  //                 {
+  //                   payload: "ENJOY_STOP_ASKING",
+  //                   title: "Stop asking!",
+  //                   type: "postback",
+  //                 },
+  //               ],
+  //               template_type: "button",
+  //               text: "Thanks for playing! Please help me improve this game - did you enjoy your game just now?",
+  //             },
+  //             type: "template",
+  //           },
+  //         };
 
-          callSendAPI(sender_psid, response);
-        } else {
-          // people do nothing
-        }
-      }
-      client.end();
-    });
-  });
+  //         callSendAPI(sender_psid, response);
+  //       } else {
+  //         // people do nothing
+  //       }
+  //     }
+  //     client.end();
+  //   });
+  // });
 }
 
 // Sends response messages via the Send API
